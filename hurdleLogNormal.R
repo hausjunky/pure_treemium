@@ -8,7 +8,6 @@ options(scipen = 999)
 
 data("pg15training")
 data <- data.table(pg15training)
-rm(pg15training)
 
 vars <- c("POL", "CAL", "GEN", "TYP", "CAT", "OCC", "AGE", "GRP", "BNS", "TEN",
           "VAL", "MAT", "SUB", "REG", "DEN", "EXP", "CPD", "CBI", "APD", "ABI")
@@ -26,7 +25,6 @@ data <- data[!dups, on = .(POL, CAL)]
 data <- rbind(data, dups)
 setorder(data, POL, CAL)
 data[, CAL := NULL]
-rm(dups)
 
 head <- c("POL", "TST", "EXP", "CPD", "APD", "CBI", "ABI")
 vars <- setdiff(names(data), head)
@@ -45,8 +43,6 @@ cbi <- data[TST == 0, -c("TST", "CPD", "CBI", "APD")]
 abi <- data[TST == 0 & ABI > 1, -c("TST", "CPD", "CBI", "APD")]
 
 scr <- data[TST == 1, -c("TST")]
-
-gc(rm(data))
 
 adj <- 1 / (mean(cpd$EXP / 365))
 
@@ -103,5 +99,3 @@ scr$IBA <- exp(predict(abi, mtx))
 scr$DPA <- exp(predict(apd, mtx))
 scr$PBI <- scr$IBC * scr$IBA * scr$EXP * bac * adj
 scr$PPD <- scr$DPC * scr$DPA * scr$EXP * pac * adj
-
-rm(hyp, mod, xcv, facs, head, keep, mtx)
